@@ -18,9 +18,41 @@ Since github api is [rate limited](https://docs.github.com/en/rest/overview/reso
 - [x] Count contributions repository wise in a org
 - [x] Generates file output to share
 
+## Usage
+
+```bash
+git clone https://github.com/slashpai/gh-contrib.git
+cd gh-contrib/cmd/gh-contrib
+go build
+```
+
+Execute binary
+
+```go
+./gh-contrib help
+```
+
+It should display output like below
+
+```go
+Usage: gh-contrib --token=STRING <command>
+
+Count your github contributions from command line
+
+Flags:
+  -h, --help            Show context-sensitive help.
+      --token=STRING    GitHub API token.
+
+Commands:
+  contrib-org     Github contributions of a user in a org.
+  contrib-repo    Github contributions of a user to a repo of a org.
+
+Run "gh-contrib <command> --help" for more information on a command.
+```
+
 ## TODO
 
-- [ ] Add more logging info
+- [ ] Add more logging info and created debugging mode
 - [ ] General Improvement & Optimisation
 - [ ] Add parallelism to code
 - [ ] Option to count contributions without specifying org

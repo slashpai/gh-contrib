@@ -128,7 +128,6 @@ func (f *Contrib) searchIssues(ctx context.Context, query string, opt *github.Se
 }
 
 var flags struct {
-	Debug      bool   `help:"Debug mode."`
 	Token      string `help:"GitHub API token." required:""`
 	ContribOrg struct {
 		Org    string `help:"GitHub Org." required:""`
