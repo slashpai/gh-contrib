@@ -137,6 +137,9 @@ docker run -v output_files:/opt/app gh-contrib:v0.1.0 contrib-org --token <token
 
 You will require to volume path to view the file, this will be a bit different in [mac](https://timonweb.com/docker/getting-path-and-accessing-persistent-volumes-in-docker-for-mac/) but should be straight forward in linux.
 
+## Sample Output
+
+- [sample output](sample_output/sample_output_contrib-repo.md)
 
 ## TODO
 
