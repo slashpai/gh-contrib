@@ -1,6 +1,6 @@
 # gh-contrib
 
-To count github contributions org wise or repo wise in a org
+To retrieve github contributions org wise or repo wise in a org and display in a tabular format (markdown)
 
 ## Pre-requistes
 
@@ -20,10 +20,46 @@ Since github api is [rate limited](https://docs.github.com/en/rest/overview/reso
 
 ## Usage
 
+### Contributions to a org
+
+```go
+Usage: gh-contrib contrib-org --token=STRING --org=STRING --author=STRING
+
+Github contributions of a user in a org.
+
+Flags:
+  -h, --help             Show context-sensitive help.
+      --token=STRING     GitHub API token.
+      --output-file      Set to true if output file need to be generated.
+
+      --org=STRING       GitHub Org.
+      --author=STRING    Author.
+```
+
+### Contributions to a repo in an org
+
+```go
+Usage: gh-contrib contrib-repo --token=STRING --org=STRING --repo=STRING --author=STRING
+
+Github contributions of a user to a repo of a org.
+
+Flags:
+  -h, --help             Show context-sensitive help.
+      --token=STRING     GitHub API token.
+      --output-file      Set to true if output file need to be generated.
+
+      --org=STRING       GitHub Org.
+      --repo=STRING      GitHub Repo in particular to check contributions.
+      --author=STRING    Author.
+```
+
+## Installation
+
+### Build and Install Binary
+
 ```bash
 git clone https://github.com/slashpai/gh-contrib.git
-cd gh-contrib/cmd/gh-contrib
-go build
+make build
 ```
 
 Execute binary
@@ -31,6 +67,8 @@ Execute binary
 ```go
 ./gh-contrib help
 ```
+
+or you can move it path like `/usr/local/bin` and execute simply `gh-contrib`
 
 It should display output like below
 
@@ -42,6 +80,7 @@ Count your github contributions from command line
 Flags:
   -h, --help            Show context-sensitive help.
       --token=STRING    GitHub API token.
+      --output-file     Set to true if output file need to be generated.
 
 Commands:
   contrib-org     Github contributions of a user in a org.
@@ -49,6 +88,55 @@ Commands:
 
 Run "gh-contrib <command> --help" for more information on a command.
 ```
+
+**Example Run**
+
+To get contribution org wise
+
+```go
+gh-contrib contrib-org --token <token> --org <org name> --author <github handle>
+```
+
+To get contribution repo wise in an org
+
+```go
+gh-contrib contrib-repo --token <token> --org <org name> --author <github handle>
+```
+
+To generate output file, add flag --output-file to command
+
+```go
+gh-contrib contrib-org --token <token> --org <org name> --author <github handle> --output-file
+```
+
+### Build docker image locally
+
+```bash
+make build-local-image
+```
+
+Execute as docker container
+
+Test running container. It should display help menu
+
+```go
+docker run gh-contrib:v0.1.0
+```
+
+Run container to get org level contributions
+
+```go
+docker run gh-contrib:v0.1.0 contrib-org --token <token> --org <org name> --author <github handle>
+```
+
+To generate output file, add flag --output-file to command
+
+```go
+docker run -v output_files:/opt/app gh-contrib:v0.1.0 contrib-org --token <token> --org <org name> --author <author name> --output-file
+```
+
+You will require to volume path to view the file, this will be a bit different in [mac](https://timonweb.com/docker/getting-path-and-accessing-persistent-volumes-in-docker-for-mac/) but should be straight forward in linux.
+
 
 ## TODO
 
