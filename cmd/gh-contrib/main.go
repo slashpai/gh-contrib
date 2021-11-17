@@ -30,7 +30,7 @@ func createContribObject(ctx context.Context, token string) *Contrib {
 	}
 }
 
-func markdownTableGenerator(header []string, rows [][]string) {
+func markdownTableGenerator(header []string, rows [][]string, outputFile bool) {
 	tableString := &strings.Builder{}
 	table := tablewriter.NewWriter(tableString)
 	table.SetHeader(header)
@@ -39,7 +39,9 @@ func markdownTableGenerator(header []string, rows [][]string) {
 	table.AppendBulk(rows) // Add Bulk Data
 	table.Render()
 	fmt.Println(tableString.String())
-	generateFile(tableString.String(), ".md")
+	if outputFile {
+		generateFile(tableString.String(), ".md")
+	}
 }
 
 func generateFile(data string, extension string) {
@@ -51,7 +53,7 @@ func generateFile(data string, extension string) {
 	out.WriteString(data)
 }
 
-func (f *Contrib) getContributionsOrg(ctx context.Context, org, author string) {
+func (f *Contrib) getContributionsOrg(ctx context.Context, org, author string, outputFile bool) {
 	opt := &github.RepositoryListByOrgOptions{Type: "public"}
 	repos, _, err := f.apiClient.Repositories.ListByOrg(ctx, org, opt)
 	if err != nil {
@@ -66,14 +68,14 @@ func (f *Contrib) getContributionsOrg(ctx context.Context, org, author string) {
 			header := []string{"SL.No", "PR", "Title"}
 			fmt.Printf("%s/%s\n", org, repo)
 			fmt.Printf("Total PRs: %d\n", len(searchResult))
-			markdownTableGenerator(header, searchResult)
+			markdownTableGenerator(header, searchResult, outputFile)
 			fmt.Println()
 		}
 	}
 }
 
 // getContributionsRepo gets all pull requests created by a user in a repo
-func (f *Contrib) getContributionsRepo(ctx context.Context, org, repo, author string) {
+func (f *Contrib) getContributionsRepo(ctx context.Context, org, repo, author string, outputFile bool) {
 	repository, _, err := f.apiClient.Repositories.Get(ctx, org, repo)
 
 	if err != nil {
@@ -88,7 +90,7 @@ func (f *Contrib) getContributionsRepo(ctx context.Context, org, repo, author st
 		header := []string{"SL.No", "PR", "Title"}
 		fmt.Printf("%s/%s\n", org, repo)
 		fmt.Printf("Total PRs: %d\n", len(searchResult))
-		markdownTableGenerator(header, searchResult)
+		markdownTableGenerator(header, searchResult, outputFile)
 		fmt.Println()
 	}
 }
@@ -129,6 +131,7 @@ func (f *Contrib) searchIssues(ctx context.Context, query string, opt *github.Se
 
 var flags struct {
 	Token      string `help:"GitHub API token." required:""`
+	OutputFile bool   `help:"Set to true if output file need to be generated."`
 	ContribOrg struct {
 		Org    string `help:"GitHub Org." required:""`
 		Author string `help:"Author." required:""`
@@ -154,9 +157,9 @@ func main() {
 	switch cli.Command() {
 	case "contrib-org":
 		c := createContribObject(ctx, flags.Token)
-		c.getContributionsOrg(ctx, flags.ContribOrg.Org, flags.ContribOrg.Author)
+		c.getContributionsOrg(ctx, flags.ContribOrg.Org, flags.ContribOrg.Author, flags.OutputFile)
 	case "contrib-repo":
 		c := createContribObject(ctx, flags.Token)
-		c.getContributionsRepo(ctx, flags.ContribRepo.Org, flags.ContribRepo.Repo, flags.ContribRepo.Author)
+		c.getContributionsRepo(ctx, flags.ContribRepo.Org, flags.ContribRepo.Repo, flags.ContribRepo.Author, flags.OutputFile)
 	}
 }
